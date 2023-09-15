@@ -1,36 +1,22 @@
 {
-	"name": "Awesome Extension",
+	"name": "Just Delete Me",
 	"version": "0.0.0",
-	"description": "An awesome new browser extension",
-	"homepage_url": "https://github.com/fregante/browser-extension-template",
+	"description": "Find out how difficult it is to delete your account from websites",
+	"homepage_url": "https://github.com/fregante/jdm",
 	"manifest_version": 3,
 	"minimum_chrome_version": "100",
-	"browser_specific_settings": {
-		"gecko": {
-			"id": "awesome-extension@notlmn.github.io",
-			"strict_min_version": "100.0"
-		}
-	},
 	"icons": {
 		"128": "icon.png"
 	},
 	"permissions": [
-		"storage"
+		"action",
+		"alarms",
+		"declarativeContent"
 	],
-	"host_permissions": [
-		"https://github.com/*"
-	],
-	"content_scripts": [
-		{
-			"matches": [ "https://github.com/fregante/browser-extension-template/*" ],
-			"js": [ "content.js" ],
-			"css": [ "content.css" ],
-			"run_at": "document_end"
+	"action": {
+		"default_icon": {
+			"32": "icons/unknown.png"
 		}
-	],
-	"options_ui": {
-		"browser_style": true,
-		"page": "options.html"
 	},
 	"background": {
 		"service_worker": "background.js",
