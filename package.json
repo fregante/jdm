@@ -2,11 +2,9 @@
 	"private": true,
 	"scripts": {
 		"build": "parcel build source/manifest.json --no-content-hash --no-source-maps --dist-dir distribution --no-cache --detailed-report 0",
-		"lint": "run-p lint:*",
-		"lint-fix": "run-p 'lint:* -- --fix'",
-		"lint:css": "stylelint source/**/*.css",
-		"lint:js": "xo",
-		"test": "run-p lint:* build",
+		"lint": "xo",
+		"fix": "xo --fix",
+		"test": "run-p lint build",
 		"watch": "parcel watch source/manifest.json --dist-dir distribution --no-cache --no-hmr"
 	},
 	"browserslist": [
@@ -27,8 +25,6 @@
 		"@types/chrome": "^0.0.246",
 		"npm-run-all": "^4.1.5",
 		"parcel": "^2.6.2",
-		"stylelint": "^14.9.1",
-		"stylelint-config-xo": "^0.21.0",
 		"xo": "^0.50.0"
 	},
 	"webExt": {
