@@ -73,6 +73,7 @@ async function updateRules() {
 
 chrome.runtime.onInstalled.addListener(updateRules);
 chrome.alarms.create('daily-update', {periodInMinutes: 60 * 24});
+chrome.alarms.onAlarm.addListener(updateRules);
 
 chrome.action.onClicked.addListener(tab => {
 	console.log('Clicked on', tab);
