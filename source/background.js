@@ -3,6 +3,21 @@ import mediumIcon from 'url:./icons/medium.png';
 import hardIcon from 'url:./icons/hard.png';
 import impossibleIcon from 'url:./icons/impossible.png';
 
+/**
+ * @typedef {'easy' | 'medium' | 'hard' | 'impossible'} Difficulty
+ * @typedef {{name: string, url?: string, domains: string[], notes?: string, difficulty: Difficulty}} Site
+ */
+
+function chunkArray(array, size) {
+	const result = [];
+	for (let i = 0; i < array.length; i += size) {
+		result.push(array.slice(i, i + size));
+	}
+
+	return result;
+}
+
+/** @type {Object.<Difficulty, ImageData>} */
 const icons = {};
 
 async function loadImageData(url) {
@@ -16,11 +31,6 @@ async function loadImageData(url) {
 	return canvasContext.getImageData(0, 0, canvas.width, canvas.height);
 }
 
-/**
- * @typedef {'easy' | 'medium' | 'hard' | 'impossible'} Difficulty
- * @typedef {{name: string, url?: string, domains: string[], notes?: string, difficulty: Difficulty}} Site
- */
-
 async function updateRules() {
 	const response = await fetch('https://raw.githubusercontent.com/jdm-contrib/jdm/master/_data/sites.json');
 
@@ -32,26 +42,33 @@ async function updateRules() {
 	/** @type {Site[]} */
 	const sites = await response.json();
 
+	console.log('Found', sites.length, 'sites');
+
+	const validSites = sites.filter(site => site.domains.length > 0 && site.difficulty in icons);
+	console.log('Found', sites.length, 'valid sites');
+
+	/** @type {chrome.events.Rule[]} */
+	const rules = validSites.map(site => ({
+		conditions: site.domains.map(domain => new chrome.declarativeContent.PageStateMatcher({
+			pageUrl: {hostSuffix: domain.toLowerCase()},
+		})),
+		actions: [
+			new chrome.declarativeContent.ShowAction(),
+			new chrome.declarativeContent.SetIcon({
+				imageData: icons[site.difficulty],
+			}),
+		],
+	}));
+
 	await chrome.action.disable();
 	await chrome.declarativeContent.onPageChanged.removeRules(undefined);
 
-	await Promise.all(sites.map(async site => {
-		if (!(site.domains.length > 0 && site.difficulty in icons)) {
-			return;
-		}
-
-		await chrome.declarativeContent.onPageChanged.addRules([{
-			conditions: site.domains.map(domain => new chrome.declarativeContent.PageStateMatcher({
-				pageUrl: {hostSuffix: domain.toLowerCase()},
-			})),
-			actions: [
-				new chrome.declarativeContent.ShowAction(),
-				new chrome.declarativeContent.SetIcon({
-					imageData: icons[site.difficulty],
-				}),
-			],
-		}]);
-	}));
+	// Try not to fail the entire extension of one site is invalid
+	// Don't call addRules too many times or else it will slow down the browser
+	chunkArray(rules, 180).map(async (chunk, i, {length}) => {
+		console.log('Adding chunk', i + 1, 'of', length);
+		await chrome.declarativeContent.onPageChanged.addRules(chunk);
+	});
 }
 
 chrome.runtime.onInstalled.addListener(updateRules);
