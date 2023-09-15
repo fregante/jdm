@@ -20,6 +20,7 @@ function chunkArray(array, size) {
 /** @type {Object.<Difficulty, ImageData>} */
 const icons = {};
 
+// Chrome won't accept `path` as a URL in SetIcon, so we have to do this...
 async function loadImageData(url) {
 	const response = await fetch(url);
 	const blob = await response.blob();
@@ -60,7 +61,6 @@ async function updateRules() {
 		],
 	}));
 
-	await chrome.action.disable();
 	await chrome.declarativeContent.onPageChanged.removeRules(undefined);
 
 	// Try not to fail the entire extension of one site is invalid
@@ -73,3 +73,14 @@ async function updateRules() {
 
 chrome.runtime.onInstalled.addListener(updateRules);
 chrome.alarms.create('daily-update', {periodInMinutes: 60 * 24});
+
+chrome.action.onClicked.addListener(tab => {
+	console.log('Clicked on', tab);
+	const url = new URL('https://justdeleteme.xyz/');
+	if (tab.url.startsWith('http')) {
+		const currentUrl = new URL(tab.url);
+		url.hash = currentUrl.host;
+	}
+
+	chrome.tabs.create({url: url.href, openerTabId: tab.id});
+});
