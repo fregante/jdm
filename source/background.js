@@ -21,15 +21,17 @@ function chunkArray(array, size) {
 const icons = {};
 
 // Chrome won't accept `path` as a URL in SetIcon, so we have to do this...
-async function loadImageData(url) {
-	const response = await fetch(url);
-	const blob = await response.blob();
-	const image = await createImageBitmap(blob);
-	const canvas = new OffscreenCanvas(image.width, image.height);
-	const canvasContext = canvas.getContext('2d');
-	canvasContext.clearRect(0, 0, canvas.width, canvas.height);
-	canvasContext.drawImage(image, 0, 0, canvas.width, canvas.height);
-	return canvasContext.getImageData(0, 0, canvas.width, canvas.height);
+async function loadImageData(path) {
+	const action = new chrome.declarativeContent.SetIcon({path});
+
+	while (action.imageData === undefined) {
+		// https://bugs.chromium.org/p/chromium/issues/detail?id=462542
+		// https://stackoverflow.com/a/66956075/288906
+		// eslint-disable-next-line no-await-in-loop
+		await new Promise(resolve => {
+			setTimeout(resolve, 100);
+		});
+	}
 }
 
 async function updateRules() {
@@ -55,9 +57,7 @@ async function updateRules() {
 		})),
 		actions: [
 			new chrome.declarativeContent.ShowAction(),
-			new chrome.declarativeContent.SetIcon({
-				imageData: icons[site.difficulty],
-			}),
+			icons[site.difficulty],
 		],
 	}));
 
