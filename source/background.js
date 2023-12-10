@@ -61,7 +61,7 @@ async function updateRules() {
 		],
 	}));
 
-	await chrome.declarativeContent.onPageChanged.removeRules(undefined);
+	await chrome.declarativeContent.onPageChanged.removeRules();
 
 	// Try not to fail the entire extension of one site is invalid
 	// Don't call addRules too many times or else it will slow down the browser

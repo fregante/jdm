@@ -4,6 +4,7 @@ env:
 
 # FILE GENERATED WITH: npx ghat fregante/ghatemplates/webext
 # SOURCE: https://github.com/fregante/ghatemplates
+# OPTIONS: {"set":["jobs.Submit.strategy.matrix.command=[Chrome]"]}
 
 name: Release
 on:
