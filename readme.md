@@ -2,17 +2,18 @@
 
 > Find out how difficult it is to delete your account from websites
 
+This extension adds a traffic light icon to your toolbar indicating the difficulty in removing an account on the website your visiting.
+
+Upon clicking this icon you will be taken to [JustDeleteMe.xyz](http://justdeleteme.xyz/), where you can find more information on how to delete your account.
+
 Information about how to delete account is pulled daily from [JustDeleteMe.xyz](http://justdeleteme.xyz/)
 
-This extension will add a traffic light icon to your toolbar indicating the difficulty in removing an account on the website your visiting.
+### Colour Key
 
-Upon clicking this icon you will be taken to justdeleteme.xyz, where you can find more information on how to delete your account.
-
-Colour Key:
 Green - Simple process
 Yellow - Some extra steps involved
 Red - Cannot be fully deleted without contacting customer-services
-Block - Cannot be deleted
+Black - Cannot be deleted
 
 ## Install
 
