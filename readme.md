@@ -10,10 +10,10 @@ Information about how to delete account is pulled daily from [JustDeleteMe.xyz](
 
 ### Colour Key
 
-Green - Simple process
-Yellow - Some extra steps involved
-Red - Cannot be fully deleted without contacting customer-services
-Black - Cannot be deleted
+Green - Simple process  
+Yellow - Some extra steps involved  
+Red - Cannot be fully deleted without contacting customer-services  
+Black - Cannot be deleted  
 
 ## Install
 
