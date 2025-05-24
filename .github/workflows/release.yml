@@ -4,7 +4,7 @@ env:
 
 # FILE GENERATED WITH: npx ghat fregante/ghatemplates/webext
 # SOURCE: https://github.com/fregante/ghatemplates
-# OPTIONS: {"set":["jobs.Submit.strategy.matrix.command=[Chrome]"]}
+# OPTIONS: {"exclude":["jobs.Firefox"]}
 
 name: Release
 on:
@@ -13,12 +13,14 @@ jobs:
   Version:
     outputs:
       created: ${{ env.DAILY_VERSION_CREATED }}
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version-file: .nvmrc
+          node-version-file: package.json
           cache: npm
       - run: npm ci
       - name: Test and build
@@ -30,7 +32,7 @@ jobs:
         run: npx dot-json@1 "$DIRECTORY/manifest.json" version "$DAILY_VERSION"
       - name: Ready for "submit" jobs
         if: env.DAILY_VERSION_CREATED
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: ${{ env.DIRECTORY }}
       - name: Create release
@@ -42,22 +44,16 @@ jobs:
           FILENAME="$PROJECT_NAME-$DAILY_VERSION-for-local-testing-only.zip"
           zip -r "$FILENAME" ./*
           gh release create "$DAILY_VERSION" --generate-notes "$FILENAME"
-  Submit:
-    needs: Version
+  Chrome:
     if: needs.Version.outputs.created
-    strategy:
-      fail-fast: false
-      matrix:
-        command:
-          - Chrome
-    environment: ${{ matrix.command }}
+    needs: Version
+    name: Submit (Chrome)
+    environment: Chrome
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v3
-      - name: Submit to Google
-        if: matrix.command == 'Chrome'
+      - uses: actions/download-artifact@v4
+      - run: npx chrome-webstore-upload-cli@3
         working-directory: artifact
-        run: npx chrome-webstore-upload-cli@2 upload --auto-publish
         env:
           EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}

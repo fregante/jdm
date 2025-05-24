@@ -2,8 +2,8 @@
 	"private": true,
 	"scripts": {
 		"build": "parcel build source/manifest.json --no-content-hash --no-source-maps --dist-dir distribution --no-cache --detailed-report 0",
-		"lint": "xo",
 		"fix": "xo --fix",
+		"lint": "xo",
 		"test": "run-p lint build",
 		"watch": "parcel watch source/manifest.json --dist-dir distribution --no-cache --no-hmr"
 	},
@@ -27,6 +27,13 @@
 		"parcel": "^2.6.2",
 		"xo": "^0.56.0"
 	},
+	"engines": {
+		"node": ">=20"
+	},
+	"@parcel/bundler-default": {
+		"minBundles": 10000000
+	},
+	"@parcel/bundler-default-bug": "https://github.com/parcel-bundler/parcel/issues/8071",
 	"webExt": {
 		"sourceDir": "distribution",
 		"run": {
@@ -34,9 +41,5 @@
 				"https://github.com/fregante/jdm"
 			]
 		}
-	},
-	"@parcel/bundler-default-bug": "https://github.com/parcel-bundler/parcel/issues/8071",
-	"@parcel/bundler-default": {
-		"minBundles": 10000000
 	}
 }
